@@ -1,0 +1,22 @@
+.page {
+  padding: 118px 12px 70px;
+}
+
+.hero {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(3.2rem, 7vw, 6rem);
+  line-height: 0.84;
+  letter-spacing: -0.1em;
+  text-transform: uppercase;
+}
+
+.copy {
+  max-width: 700px;
+  color: rgba(17, 17, 17, 0.68);
+}

@@ -1,0 +1,103 @@
+.stack {
+  display: grid;
+  gap: 14px;
+}
+
+.secretGate,
+.panel {
+  display: grid;
+  gap: 18px;
+  padding: 26px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(17, 17, 17, 0.08);
+  box-shadow: 0 24px 48px rgba(18, 18, 18, 0.1);
+}
+
+.secretGate {
+  gap: 8px;
+}
+
+.secretLabel {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(17, 17, 17, 0.56);
+}
+
+.secretInput {
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid rgba(17, 17, 17, 0.12);
+  background: rgba(17, 17, 17, 0.02);
+  padding: 14px 16px;
+  -webkit-text-security: disc;
+  text-security: disc;
+}
+
+.grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.fieldWide {
+  grid-column: 1 / -1;
+}
+
+.field label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(17, 17, 17, 0.56);
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid rgba(17, 17, 17, 0.12);
+  background: rgba(17, 17, 17, 0.02);
+  padding: 14px 16px;
+}
+
+.field textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+.checkboxRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.feedback {
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(17, 17, 17, 0.04);
+}
+
+.feedbackError {
+  background: rgba(185, 28, 28, 0.08);
+  color: #8b1d1d;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 760px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
