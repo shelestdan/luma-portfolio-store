@@ -1,10 +1,11 @@
 import { AddProductForm } from "@/components/studio/AddProductForm";
+import { hasLiveApi } from "@/lib/runtime";
+import { enableDynamicRendering } from "@/lib/server-runtime";
 import { getFilms } from "@/lib/store";
 import styles from "@/app/studio/add/page.module.css";
 
-export const dynamic = "force-dynamic";
-
-export default function StudioAddPage() {
+export default async function StudioAddPage() {
+  await enableDynamicRendering();
   const films = getFilms();
 
   return (
@@ -18,7 +19,7 @@ export default function StudioAddPage() {
             lightweight and protected by a shared secret instead of a full admin area.
           </p>
         </div>
-        <AddProductForm films={films} />
+        <AddProductForm films={films} studioEnabled={hasLiveApi} />
       </div>
     </main>
   );

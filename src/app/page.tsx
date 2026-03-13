@@ -1,9 +1,9 @@
 import { HomeExperience } from "@/components/home/HomeExperience";
+import { enableDynamicRendering } from "@/lib/server-runtime";
 import { getHomepageData } from "@/lib/store";
 
-export const dynamic = "force-dynamic";
-
-export default function Home() {
+export default async function Home() {
+  await enableDynamicRendering();
   const data = getHomepageData();
 
   return (

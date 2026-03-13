@@ -5,6 +5,8 @@ import { SiteFooter } from "@/components/chrome/SiteFooter";
 import { SiteHeader } from "@/components/chrome/SiteHeader";
 import { StoreProvider } from "@/components/providers/StoreProvider";
 import { brand } from "@/lib/brand";
+import { hasLiveApi } from "@/lib/runtime";
+import { getSearchIndex } from "@/lib/store";
 import "./globals.css";
 
 const displayFont = League_Spartan({
@@ -29,11 +31,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const searchIndex = getSearchIndex();
+
   return (
     <html lang="en">
       <body className={`${displayFont.variable} ${uiFont.variable}`}>
         <StoreProvider>
-          <SiteHeader />
+          <SiteHeader initialSearchIndex={searchIndex} liveSearch={hasLiveApi} />
           {children}
           <SiteFooter />
         </StoreProvider>

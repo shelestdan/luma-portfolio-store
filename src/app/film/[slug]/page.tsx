@@ -2,16 +2,20 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import { ProductCard } from "@/components/shared/ProductCard";
-import { getFilmBySlug, getProductsByFilmId } from "@/lib/store";
+import { enableDynamicRendering } from "@/lib/server-runtime";
+import { getFilmBySlug, getFilms, getProductsByFilmId } from "@/lib/store";
 import styles from "@/app/film/[slug]/page.module.css";
 
-export const dynamic = "force-dynamic";
+export async function generateStaticParams() {
+  return getFilms().map((film) => ({ slug: film.slug }));
+}
 
 export default async function FilmPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  await enableDynamicRendering();
   const { slug } = await params;
   const film = getFilmBySlug(slug);
 

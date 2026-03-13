@@ -3,6 +3,9 @@ import crypto from "node:crypto";
 import { z } from "zod";
 
 import { getDb } from "@/lib/db";
+import { createProductPlaceholderImage } from "@/lib/product-placeholder";
+import { hasLiveApi } from "@/lib/runtime";
+import { filmSeeds, productSeeds } from "@/lib/seed";
 import type { Film, Product, ProductCategory } from "@/lib/types";
 
 const productInputSchema = z.object({
@@ -54,11 +57,37 @@ function mapProduct(row: Record<string, unknown>): Product {
   };
 }
 
-function defaultProductImage(slug: string, mode: "front" | "back") {
-  return `/api/placeholder/product/${slug}?mode=${mode}`;
+function getSeedFilms() {
+  return [...filmSeeds].sort(
+    (left, right) => left.sortOrder - right.sortOrder || left.title.localeCompare(right.title),
+  );
+}
+
+function getSeedProducts() {
+  return [...productSeeds].sort(
+    (left, right) =>
+      new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime() ||
+      left.title.localeCompare(right.title),
+  );
+}
+
+function defaultProductImage(
+  slug: string,
+  mode: "front" | "back",
+  category: ProductCategory,
+) {
+  return createProductPlaceholderImage({
+    slug,
+    mode,
+    category,
+  });
 }
 
 export function getFilms() {
+  if (!hasLiveApi) {
+    return getSeedFilms();
+  }
+
   const db = getDb();
   const rows = db
     .prepare("SELECT * FROM films ORDER BY sortOrder ASC, title ASC")
@@ -68,6 +97,10 @@ export function getFilms() {
 }
 
 export function getFilmBySlug(slug: string) {
+  if (!hasLiveApi) {
+    return getSeedFilms().find((film) => film.slug === slug) ?? null;
+  }
+
   const db = getDb();
   const row = db
     .prepare("SELECT * FROM films WHERE slug = ?")
@@ -77,6 +110,10 @@ export function getFilmBySlug(slug: string) {
 }
 
 export function getProducts() {
+  if (!hasLiveApi) {
+    return getSeedProducts();
+  }
+
   const db = getDb();
   const rows = db
     .prepare("SELECT * FROM products ORDER BY datetime(createdAt) DESC, title ASC")
@@ -86,6 +123,10 @@ export function getProducts() {
 }
 
 export function getProductBySlug(slug: string) {
+  if (!hasLiveApi) {
+    return getSeedProducts().find((product) => product.slug === slug) ?? null;
+  }
+
   const db = getDb();
   const row = db
     .prepare("SELECT * FROM products WHERE slug = ?")
@@ -95,6 +136,10 @@ export function getProductBySlug(slug: string) {
 }
 
 export function getProductsByFilmId(filmId: string) {
+  if (!hasLiveApi) {
+    return getSeedProducts().filter((product) => product.filmId === filmId);
+  }
+
   const db = getDb();
   const rows = db
     .prepare(
@@ -132,6 +177,10 @@ export function getHomepageData() {
 }
 
 export function createProduct(input: ProductInput) {
+  if (!hasLiveApi) {
+    throw new Error("Product creation is disabled in the GitHub Pages export.");
+  }
+
   const payload = productInputSchema.parse(input);
   const db = getDb();
 
@@ -160,8 +209,10 @@ export function createProduct(input: ProductInput) {
     category: payload.category,
     price: payload.price,
     statusLabel: payload.statusLabel,
-    primaryImage: payload.primaryImage || defaultProductImage(payload.slug, "front"),
-    secondaryImage: payload.secondaryImage || defaultProductImage(payload.slug, "back"),
+    primaryImage:
+      payload.primaryImage || defaultProductImage(payload.slug, "front", payload.category),
+    secondaryImage:
+      payload.secondaryImage || defaultProductImage(payload.slug, "back", payload.category),
     description: payload.description,
     featured: payload.featured,
     createdAt,

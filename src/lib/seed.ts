@@ -1,7 +1,16 @@
+import { createProductPlaceholderImage } from "@/lib/product-placeholder";
 import type { Film, Product } from "@/lib/types";
 
-const placeholderProduct = (slug: string, mode: "front" | "back") =>
-  `/api/placeholder/product/${slug}?mode=${mode}`;
+const placeholderProduct = (
+  slug: string,
+  mode: "front" | "back",
+  category: Product["category"] = "Apparel",
+) =>
+  createProductPlaceholderImage({
+    slug,
+    mode,
+    category,
+  });
 
 export const filmSeeds: Film[] = [
   {
@@ -194,8 +203,8 @@ export const productSeeds: Product[] = [
     category: "Posters",
     price: 30,
     statusLabel: "Sold Out",
-    primaryImage: placeholderProduct("anora-full-service-print", "front"),
-    secondaryImage: placeholderProduct("anora-full-service-print", "back"),
+    primaryImage: placeholderProduct("anora-full-service-print", "front", "Posters"),
+    secondaryImage: placeholderProduct("anora-full-service-print", "back", "Posters"),
     description:
       "Signed-print style poster asset used to reproduce the sold-out collectible energy of boutique release merch pages.",
     featured: true,
@@ -209,8 +218,8 @@ export const productSeeds: Product[] = [
     category: "Posters",
     price: 20,
     statusLabel: "Sold Out",
-    primaryImage: placeholderProduct("anora-night-butterfly-print", "front"),
-    secondaryImage: placeholderProduct("anora-night-butterfly-print", "back"),
+    primaryImage: placeholderProduct("anora-night-butterfly-print", "front", "Posters"),
+    secondaryImage: placeholderProduct("anora-night-butterfly-print", "back", "Posters"),
     description:
       "Another poster-led collectible that helps the catalog look like a real campaign release rather than a single-SKU demo.",
     featured: false,
@@ -224,8 +233,8 @@ export const productSeeds: Product[] = [
     category: "Books",
     price: 35,
     statusLabel: "Pre-Order",
-    primaryImage: placeholderProduct("anora-screenplay", "front"),
-    secondaryImage: placeholderProduct("anora-screenplay", "back"),
+    primaryImage: placeholderProduct("anora-screenplay", "front", "Books"),
+    secondaryImage: placeholderProduct("anora-screenplay", "back", "Books"),
     description:
       "A script object for the detail page layout, used to vary silhouettes and break up the apparel-heavy rails.",
     featured: false,
@@ -269,8 +278,8 @@ export const productSeeds: Product[] = [
     category: "Posters",
     price: 55,
     statusLabel: "Pre-Order",
-    primaryImage: placeholderProduct("the-secret-agent-limited-edition-poster", "front"),
-    secondaryImage: placeholderProduct("the-secret-agent-limited-edition-poster", "back"),
+    primaryImage: placeholderProduct("the-secret-agent-limited-edition-poster", "front", "Posters"),
+    secondaryImage: placeholderProduct("the-secret-agent-limited-edition-poster", "back", "Posters"),
     description:
       "A premium poster concept that gives the merch shelf a high-value hero SKU and strong lightbox-style imagery.",
     featured: true,

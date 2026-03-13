@@ -7,13 +7,29 @@ import styles from "@/components/studio/AddProductForm.module.css";
 
 interface AddProductFormProps {
   films: Film[];
+  studioEnabled: boolean;
 }
 
-export function AddProductForm({ films }: AddProductFormProps) {
+export function AddProductForm({ films, studioEnabled }: AddProductFormProps) {
   const [secret, setSecret] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [isError, setIsError] = useState(false);
   const [isPending, startFormTransition] = useTransition();
+
+  if (!studioEnabled) {
+    return (
+      <div className={styles.stack}>
+        <div className={styles.panel}>
+          <span className="eyebrow">GitHub Pages demo</span>
+          <h2 className={styles.disabledTitle}>Studio add is disabled on the public static build.</h2>
+          <p className={styles.disabledCopy}>
+            Product creation depends on the local runtime API and SQLite catalog. Run the local
+            application build if you need to add or seed more products.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   async function handleSubmit(formData: FormData) {
     setMessage(null);
@@ -50,6 +66,7 @@ export function AddProductForm({ films }: AddProductFormProps) {
     }
 
     setMessage(`Created ${result.title}. Open /product/${result.slug} to review it.`);
+    window.dispatchEvent(new Event("catalog-updated"));
   }
 
   return (

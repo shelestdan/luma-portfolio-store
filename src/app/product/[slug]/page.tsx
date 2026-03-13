@@ -5,16 +5,20 @@ import { notFound } from "next/navigation";
 import { AddToCartButton } from "@/components/product/AddToCartButton";
 import { WishlistButton } from "@/components/product/WishlistButton";
 import { formatCurrency } from "@/lib/format";
-import { getFilms, getProductBySlug } from "@/lib/store";
+import { enableDynamicRendering } from "@/lib/server-runtime";
+import { getFilms, getProductBySlug, getProducts } from "@/lib/store";
 import styles from "@/app/product/[slug]/page.module.css";
 
-export const dynamic = "force-dynamic";
+export async function generateStaticParams() {
+  return getProducts().map((product) => ({ slug: product.slug }));
+}
 
 export default async function ProductPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  await enableDynamicRendering();
   const { slug } = await params;
   const product = getProductBySlug(slug);
 

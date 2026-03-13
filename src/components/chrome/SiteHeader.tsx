@@ -65,7 +65,12 @@ function SearchResults({
   );
 }
 
-export function SiteHeader() {
+interface SiteHeaderProps {
+  initialSearchIndex: StoreSearchIndex;
+  liveSearch: boolean;
+}
+
+export function SiteHeader({ initialSearchIndex, liveSearch }: SiteHeaderProps) {
   const {
     activeDrawer,
     cart,
@@ -75,13 +80,14 @@ export function SiteHeader() {
     removeFromCart,
     updateQuantity,
   } = useStore();
-  const [searchIndex, setSearchIndex] = useState<StoreSearchIndex>({
-    films: [],
-    products: [],
-  });
+  const [searchIndex, setSearchIndex] = useState<StoreSearchIndex>(initialSearchIndex);
   const [query, setQuery] = useState("");
 
   useEffect(() => {
+    if (!liveSearch) {
+      return;
+    }
+
     let ignore = false;
 
     async function loadIndex() {
@@ -100,16 +106,19 @@ export function SiteHeader() {
       }
     }
 
-    loadIndex().catch(() => {
-      if (!ignore) {
-        setSearchIndex({ films: [], products: [] });
-      }
-    });
+    void loadIndex();
+
+    function handleCatalogUpdate() {
+      void loadIndex();
+    }
+
+    window.addEventListener("catalog-updated", handleCatalogUpdate);
 
     return () => {
       ignore = true;
+      window.removeEventListener("catalog-updated", handleCatalogUpdate);
     };
-  }, []);
+  }, [liveSearch]);
 
   const cartProducts = cart
     .map((item) => ({
